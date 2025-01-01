@@ -9,9 +9,15 @@ export type Task = {
   dueDate: string;
   completed: boolean;
   completedDate: string | null;
+  assignedUser?: string;
 };
 
 export type Column = {
+  id: string;
+  name: string;
+};
+
+export type User = {
   id: string;
   name: string;
 };
@@ -21,6 +27,7 @@ export type TaskContextType = {
   columns: Column[];
   theme: "light" | "dark";
   selectedTask: Task | null;
+  users: User[];
   updateTaskStatus: (id: string, status: string) => void;
   addTask: (task: Task) => void;
   removeTask: (id: string) => void;
@@ -30,6 +37,7 @@ export type TaskContextType = {
   selectTask: (task: Task | null) => void;
   updateTask: (updatedTask: Task) => void;
   toggleTaskCompletion: (id: string) => void;
+  assignUserToTask: (taskId: string, userId: string) => void;
 };
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -42,6 +50,10 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       : {
           tasks: [],
           columns: [{ id: "backlog", name: "Backlog" }],
+          users: [
+            { id: "1", name: "John Doe" },
+            { id: "2", name: "Daniele Parisi" },
+          ],
         };
   };
 
@@ -50,6 +62,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     columns: Column[];
     theme: "light" | "dark";
     selectedTask: Task | null;
+    users: User[];
   }>(() => ({ ...getInitialState(), selectedTask: null }));
 
   useEffect(() => {
@@ -76,6 +89,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       tasks: prev.tasks.filter((task) => task.id !== id),
     }));
   };
+
   const updateTask = (updatedTask: Task) => {
     setState((prev) => ({
       ...prev,
@@ -137,6 +151,15 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     }));
   };
 
+  const assignUserToTask = (taskId: string, userId: string) => {
+    setState((prev) => ({
+      ...prev,
+      tasks: prev.tasks.map((task) =>
+        task.id === taskId ? { ...task, assignedUser: userId } : task
+      ),
+    }));
+  };
+
   return (
     <TaskContext.Provider
       value={{
@@ -150,6 +173,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         selectTask,
         updateTask,
         toggleTaskCompletion,
+        assignUserToTask,
       }}
     >
       {children}

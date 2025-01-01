@@ -12,6 +12,7 @@ type TaskCardProps = {
     dueDate: string;
     completed: boolean;
     completedDate: string | null;
+    assignedUser?: string;
   };
 };
 
@@ -114,8 +115,17 @@ const TaskCard = ({ task }: TaskCardProps) => {
       <p className="text-sm text-gray-500 my-2 max-h-24 overflow-auto break-words">
         {task.description}
       </p>
-      <p className="text-sm text-gray-500">Priority: {task.priority}</p>
-      <p className={`text-sm mt-2 ${getDueDateColor(task.dueDate)}`}>
+      <p className="text-sm text-gray-500 font-semibold my-2 max-h-24 overflow-auto break-words">
+        {task.assignedUser}
+      </p>
+      <p className="text-sm text-gray-500 font-semibold">
+        Priority: {task.priority}
+      </p>
+      <p
+        className={`text-sm mt-2 font-semibold ${getDueDateColor(
+          task.dueDate
+        )}`}
+      >
         {task.dueDate
           ? `Due: ${new Date(task.dueDate).toLocaleDateString()}`
           : "No due date"}

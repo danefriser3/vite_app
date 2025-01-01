@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { useTaskContext } from "../../context/TaskContext";
-import { Check, Clear } from "@mui/icons-material";
 
 const TaskDetailsDialog = () => {
-  const { selectedTask, selectTask, updateTask } = useTaskContext();
+  const { selectedTask, selectTask, updateTask, users } = useTaskContext();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
+  const [assignedUser, setAssignedUser] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [completed, setCompleted] = useState(false);
 
   const handleSave = () => {
     updateTask({
@@ -22,6 +21,7 @@ const TaskDetailsDialog = () => {
       priority,
       dueDate,
       completedDate: selectedTask!.completedDate,
+      assignedUser,
     });
     selectTask(null);
   };
@@ -30,12 +30,13 @@ const TaskDetailsDialog = () => {
       setTitle(selectedTask.title);
       setDescription(selectedTask.description);
       setPriority(selectedTask.priority);
+      setAssignedUser(selectedTask.assignedUser!);
       setDueDate(selectedTask.dueDate);
-      setCompleted(selectedTask.completed);
       return;
     }
     setTitle("");
     setDescription("");
+    setAssignedUser("");
     setPriority("");
     setDueDate("");
   }, [selectedTask]);
@@ -79,6 +80,20 @@ const TaskDetailsDialog = () => {
             </select>
           </div>
           <div>
+            <label className="block text-sm font-medium">Assigned to</label>
+            <select
+              value={assignedUser}
+              onChange={(e) => setAssignedUser(e.target.value)}
+              className="w-full border rounded px-2 py-1"
+            >
+              {users.map((col) => (
+                <option key={col.id} value={col.name}>
+                  {col.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
             <label className="block text-sm font-medium">Due Date</label>
             <input
               type="date"
@@ -86,28 +101,6 @@ const TaskDetailsDialog = () => {
               onChange={(e) => setDueDate(e.target.value)}
               className="w-full border rounded px-2 py-1"
             />
-          </div>
-          <div>
-            <button
-              onClick={() => {
-                setCompleted(!completed);
-              }}
-              className={`py-1 px-2 rounded ${
-                completed ? "bg-green-500" : "bg-gray-500"
-              } text-white`}
-            >
-              {completed ? (
-                <div className="flex items-center gap-1">
-                  <Check fontSize="small" />
-                  Completed
-                </div>
-              ) : (
-                <div className="flex items-center gap-1">
-                  <Clear fontSize="small" />
-                  Incomplete
-                </div>
-              )}
-            </button>
           </div>
         </div>
         <div className="mt-4 flex justify-end gap-2">

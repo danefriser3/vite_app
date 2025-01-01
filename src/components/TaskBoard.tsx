@@ -88,14 +88,14 @@ const TaskBoard = () => {
           </div>
           <button
             onClick={toggleDialog}
-            className="bg-yellow-600 text-white py-1 px-2 hover:bg-yellow-900 border-none rounded-lg"
+            className="bg-yellow-600 text-white py-1 px-2 hover:bg-yellow-900 border-none rounded-lg shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]"
           >
             {open ? (
               <VisibilityOff fontSize="small" />
             ) : (
               <Visibility fontSize="small" />
             )}{" "}
-            Task Summary
+            Tasks Stats
           </button>
         </div>
       </div>
@@ -124,7 +124,7 @@ const TaskBoard = () => {
                       <MenuIcon fontSize="small" />
                     </button>
                     {openMenu[column.id] && (
-                      <div className="absolute right-0 mt-1 bg-white  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.2)] border rounded-md w-40 z-50">
+                      <div className="absolute right-0 mt-1 bg-white  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.2)] border rounded-md w-44 z-50">
                         <button
                           onClick={() => handleDeleteColumn(column.id)}
                           className="w-full flex flex-row gap-2 items-center text-left px-4 py-2 bg-white text-sm text-red-500 border-none hover:!bg-slate-100"

@@ -86,7 +86,9 @@ body.light .bg-gray-100 {
 body.light .text-black {
   color: #000;
 }
-
+body.light .text-black1 {
+  color: #fff;
+}
 
 body.dark {
   background-color: #121212;

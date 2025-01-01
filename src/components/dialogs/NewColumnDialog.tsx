@@ -32,7 +32,7 @@ const NewColumnDialog = () => {
       </button>
       {isColumnDialogOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-gray-600 rounded-lg p-6 w-96">
+          <div className="bg-gray-600 rounded-lg p-6 w-96  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
             <h2 className="text-lg font-bold mb-4 text-black">
               Add New Category
             </h2>
@@ -42,7 +42,7 @@ const NewColumnDialog = () => {
               value={columnName}
               onChange={(e) => setColumnName(e.target.value)}
               placeholder="Category Name"
-              className="border rounded px-2 py-1 w-full mb-4"
+              className="border rounded px-2 py-1 w-full mb-4 text-black1"
             />
             <div className="flex justify-end gap-2">
               <button

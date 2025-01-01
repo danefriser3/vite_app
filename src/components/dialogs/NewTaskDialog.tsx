@@ -4,8 +4,9 @@ import { PlaylistAdd } from "@mui/icons-material";
 
 const NewTaskDialog = () => {
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
-  const { columns, addTask } = useTaskContext();
+  const { columns, addTask, users } = useTaskContext();
   const [title, setTitle] = useState("");
+  const [assignedUser, setAssignedUser] = useState(users[0].name);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Low");
   const [status, setStatus] = useState(columns[0]?.name || "");
@@ -14,13 +15,14 @@ const NewTaskDialog = () => {
   const [validate, setValidate] = useState(false);
 
   useEffect(() => {
-    if (isTaskDialogOpen) {
-      setValidate(false);
-      setDescription("");
-      setTitle("");
-      setPriority("Low");
-      setDueDate("");
+    if (!isTaskDialogOpen) {
+      return;
     }
+    setValidate(false);
+    setDescription("");
+    setTitle("");
+    setPriority("Low");
+    setDueDate("");
   }, [isTaskDialogOpen]);
 
   const handleAddTask = () => {
@@ -37,6 +39,7 @@ const NewTaskDialog = () => {
       dueDate,
       completed: false,
       completedDate: null,
+      assignedUser,
     });
     setTitle("");
     setIsTaskDialogOpen(false);
@@ -55,7 +58,7 @@ const NewTaskDialog = () => {
       </button>
       {isTaskDialogOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="rounded-lg p-6 w-96 bg-gray-600">
+          <div className="rounded-lg p-6 w-4/12 bg-gray-600  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
             <h2 className="text-lg font-bold mb-4 text-black">Add New Task</h2>
             <div className="flex flex-col gap-2">
               <input
@@ -64,7 +67,7 @@ const NewTaskDialog = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Task Title..."
-                className={`w-full border rounded p-2 ${
+                className={`w-full border rounded text-black1 p-2 ${
                   title === "" && validate ? "border-2 border-red-500" : ""
                 }`}
               />
@@ -73,19 +76,20 @@ const NewTaskDialog = () => {
                   * Add a title
                 </span>
               )}
-              <input
-                type="text"
+
+              <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                className="w-full border rounded text-black1 px-2 py-1"
+                rows={5}
                 placeholder="Task Description..."
-                className="border rounded px-2 py-1"
               />
               <select
                 value={priority}
                 onChange={(e) =>
                   setPriority(e.target.value as "Low" | "Medium" | "High")
                 }
-                className="border rounded px-2 py-1 text-white"
+                className="border rounded text-black1 px-2 py-1 text-white"
               >
                 <option value="Low">Low Priority</option>
                 <option value="Medium">Medium Priority</option>
@@ -97,6 +101,17 @@ const NewTaskDialog = () => {
                 className="border rounded px-2 py-1 text-white"
               >
                 {columns.map((col) => (
+                  <option key={col.id} value={col.name}>
+                    {col.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={assignedUser}
+                onChange={(e) => setAssignedUser(e.target.value)}
+                className="border rounded px-2 py-1 text-white"
+              >
+                {users.map((col) => (
                   <option key={col.id} value={col.name}>
                     {col.name}
                   </option>

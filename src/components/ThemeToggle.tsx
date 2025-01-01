@@ -15,9 +15,15 @@ const ThemeToggle = () => {
       className="bg-gray-500 text-sm text-white flex flex-row gap-2 rounded-md shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]"
     >
       {darkMode ? (
-        <DarkMode fontSize="small" />
+        <>
+          <LightMode fontSize="small" />
+          Light mode
+        </>
       ) : (
-        <LightMode fontSize="small" />
+        <>
+          <DarkMode fontSize="small" />
+          Dark mode
+        </>
       )}
     </button>
   );
