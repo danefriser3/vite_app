@@ -13,13 +13,11 @@ const COLORS = [
 const Chart = () => {
   const { columns, tasks } = useTaskContext();
 
-  // Calcola i dati per la Pie Chart
   const taskCounts = columns.map((column) => ({
     name: column.name,
     value: tasks.filter((task) => task.status === column.name).length,
   }));
 
-  // Filtra solo le colonne con task per la Pie
   const filteredData = taskCounts.filter((data) => data.value > 0);
 
   return (
@@ -49,7 +47,7 @@ const Chart = () => {
             layout="horizontal"
             formatter={(value) => {
               const data = taskCounts.find((item) => item.name === value);
-              return `${value} (${data?.value || 0})`; // Mostra task count nella legenda
+              return `${value} (${data?.value || 0})`;
             }}
           />
           <Tooltip />

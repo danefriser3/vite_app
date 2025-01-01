@@ -73,7 +73,7 @@ button:focus-visible {
   max-width: 100%;
 }
 
-/* Modalità chiara */
+
 body.light {
   background-color: #fff;
   color: #000;
@@ -87,7 +87,7 @@ body.light .text-black {
   color: #000;
 }
 
-/* Modalità scura */
+
 body.dark {
   background-color: #121212;
 }
@@ -96,35 +96,35 @@ body.dark .bg-gray-100 {
   background-color: #2d2d2d;
 }
 
-/* Stile per i browser moderni */
+
 ::-webkit-scrollbar {
   width: 8px;
-  /* Larghezza della barra verticale */
+  
   height: 8px;
-  /* Altezza della barra orizzontale */
+  
 }
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
-  /* Sfondo del tracciato */
+  
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #888;
-  /* Colore della barra */
+  
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
-  /* Colore al passaggio del mouse */
+  
 }
 
-/* Stile per Firefox */
+
 .scroll-container {
   scrollbar-width: thin;
-  /* Larghezza ridotta */
+  
   scrollbar-color: #888 #f1f1f1;
-  /* Colore della barra e dello sfondo */
+  
 }

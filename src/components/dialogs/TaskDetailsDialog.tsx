@@ -5,7 +5,6 @@ import { Check, Clear } from "@mui/icons-material";
 const TaskDetailsDialog = () => {
   const { selectedTask, selectTask, updateTask } = useTaskContext();
 
-  // Stati per i campi editabili
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
@@ -24,7 +23,7 @@ const TaskDetailsDialog = () => {
       dueDate,
       completedDate: selectedTask!.completedDate,
     });
-    selectTask(null); // Chiude la dialog
+    selectTask(null);
   };
   useEffect(() => {
     if (selectedTask) {
@@ -113,13 +112,13 @@ const TaskDetailsDialog = () => {
         </div>
         <div className="mt-4 flex justify-end gap-2">
           <button
-            onClick={() => selectTask(null)} // Chiude la dialog senza salvare
+            onClick={() => selectTask(null)}
             className="bg-gray-300 hover:bg-gray-400 text-black py-1 px-2 rounded"
           >
             Cancel
           </button>
           <button
-            onClick={handleSave} // Salva le modifiche
+            onClick={handleSave}
             className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded"
           >
             Save

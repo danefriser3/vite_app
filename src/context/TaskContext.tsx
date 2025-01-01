@@ -54,7 +54,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     localStorage.setItem("taskManagerData", JSON.stringify(state));
-    document.body.className = state.theme; // Cambia la classe body in base al tema
+    document.body.className = state.theme;
   }, [state]);
 
   const updateTaskStatus = (id: string, status: string) => {
@@ -108,7 +108,6 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const removeColumn = (id: string) => {
-    // Non rimuovere la colonna "Backlog"
     if (id === "backlog") return;
 
     const colname = state.columns.find((col) => col.id === id)?.name;
@@ -119,7 +118,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 
     setState((prev) => ({
       ...prev,
-      columns: prev.columns.filter((col) => col.id !== id), // Rimuovi la colonna da rimuovere
+      columns: prev.columns.filter((col) => col.id !== id),
       tasks: tasksToMove,
     }));
   };
@@ -127,7 +126,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const toggleTheme = () => {
     setState((prev) => ({
       ...prev,
-      theme: prev.theme === "light" ? "dark" : "light", // Toggle tra "light" e "dark"
+      theme: prev.theme === "light" ? "dark" : "light",
     }));
   };
 

@@ -215,7 +215,7 @@ const TaskBoard = () => {
                       : "No due date"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    <div className="flex flex-row gap-0  rounded-lg shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
+                    <div className="flex flex-row gap-0 rounded-lg shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
                       <button
                         onClick={() => selectTask(task)}
                         className="text-black hover:underline bg-yellow-200 rounded-r-none py-1 px-2"
