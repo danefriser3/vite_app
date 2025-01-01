@@ -12,7 +12,10 @@ import {
   List,
   Menu as MenuIcon,
   ViewColumn,
+  Visibility,
+  VisibilityOff,
 } from "@mui/icons-material";
+import TaskSummaryDialog from "./dialogs/TaskSummaryDialog";
 
 const TaskBoard = () => {
   const {
@@ -26,6 +29,8 @@ const TaskBoard = () => {
   } = useTaskContext();
   const [openMenu, setOpenMenu] = useState<Record<string, boolean>>({});
   const [viewMode, setViewMode] = useState<"columns" | "table">("columns");
+  const [open, setOpen] = useState(false);
+  const toggleDialog = () => setOpen((prev) => !prev);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -52,36 +57,51 @@ const TaskBoard = () => {
           <NewTaskDialog />
           <NewColumnDialog />
         </div>
-        <div className="flex flex-row items-center rounded-md shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
+        <div className="flex flex-row gap-4 items-center">
+          <div className="flex flex-row items-center rounded-lg shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
+            <button
+              title="View as Table"
+              disabled={viewMode === "table" || open}
+              onClick={() => setViewMode("table")}
+              className={`bg-red-500 text-white py-1 px-2 rounded-lg border-none rounded-r-none ${
+                columns.length === 0 ? "cursor-not-allowed" : "hover:bg-red-700"
+              } ${
+                viewMode === "table" || open
+                  ? "cursor-not-allowed !bg-gray-500 hover:bg-gray-500"
+                  : ""
+              }`}
+            >
+              <List fontSize="small" />
+            </button>
+            <button
+              title="View as Columns"
+              disabled={viewMode === "columns" || open}
+              onClick={() => setViewMode("columns")}
+              className={`bg-purple-500 text-white py-1 px-2 hover:bg-purple-700 border-none rounded-lg rounded-l-none ${
+                viewMode === "columns" || open
+                  ? "cursor-not-allowed !bg-gray-500 hover:bg-gray-500"
+                  : ""
+              }`}
+            >
+              <ViewColumn fontSize="small" />
+            </button>
+          </div>
           <button
-            title="View as Table"
-            disabled={viewMode === "table"}
-            onClick={() => setViewMode("table")}
-            className={`bg-red-500 text-white py-1 px-2 rounded-md  border-none rounded-r-none ${
-              columns.length === 0 ? "cursor-not-allowed" : "hover:bg-red-700"
-            } ${
-              viewMode === "table"
-                ? "cursor-not-allowed !bg-gray-500 hover:bg-gray-500"
-                : ""
-            }`}
+            onClick={toggleDialog}
+            className="bg-yellow-600 text-white py-1 px-2 hover:bg-yellow-900 border-none rounded-lg"
           >
-            <List fontSize="small" />
-          </button>
-          <button
-            title="View as Columns"
-            disabled={viewMode === "columns"}
-            onClick={() => setViewMode("columns")}
-            className={`bg-purple-500 text-white py-1 px-2 rounded-md hover:bg-purple-700 border-none rounded-l-none ${
-              viewMode === "columns"
-                ? "cursor-not-allowed !bg-gray-500 hover:bg-gray-500"
-                : ""
-            }`}
-          >
-            <ViewColumn fontSize="small" />
+            {open ? (
+              <VisibilityOff fontSize="small" />
+            ) : (
+              <Visibility fontSize="small" />
+            )}{" "}
+            Task Summary
           </button>
         </div>
       </div>
-      {viewMode === "columns" ? (
+      {open ? (
+        <TaskSummaryDialog />
+      ) : viewMode === "columns" ? (
         <div
           className="flex flex-row gap-4 overflow-x-auto p-2 h-full"
           style={{ maxHeight: "calc(100vh - 200px)" }}
@@ -111,7 +131,7 @@ const TaskBoard = () => {
                         >
                           <Delete />
                           <span className="w-full text-black">
-                            Delete Status
+                            Delete Category
                           </span>
                         </button>
                       </div>
@@ -141,7 +161,7 @@ const TaskBoard = () => {
                   Priority
                 </th>
                 <th className="border border-gray-300 px-4 py-2 text-left">
-                  Status
+                  Category
                 </th>
                 <th className="border border-gray-300 px-4 py-2 text-left">
                   Completed
