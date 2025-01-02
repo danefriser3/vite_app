@@ -1,10 +1,42 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from "react";
+import ReactDOM from "react-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { App } from "./App";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import "./index.css";
-import { App } from "./App.tsx";
+import { TaskProvider } from "./context/TaskContext";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+const Main = () => {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={isAuthenticated ? <App /> : <Navigate to="/login" />}
+        />
+      </Routes>
+    </Router>
+  );
+};
+
+ReactDOM.render(
+  <React.StrictMode>
+    <TaskProvider>
+      <AuthProvider>
+        <Main />
+      </AuthProvider>
+    </TaskProvider>
+  </React.StrictMode>,
+  document.getElementById("root")
 );

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useTaskContext } from "../../context/TaskContext";
 import { PlaylistAdd } from "@mui/icons-material";
+import { useAuth } from "../../context/AuthContext";
 
 const NewTaskDialog = () => {
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
-  const { columns, addTask, users } = useTaskContext();
+  const { columns, addTask } = useTaskContext();
+  const { users, loggedUser } = useAuth();
   const [title, setTitle] = useState("");
-  const [assignedUser, setAssignedUser] = useState(users[0].name);
+  const [assignedUser, setAssignedUser] = useState(users[0].fullname);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Low");
   const [status, setStatus] = useState(columns[0]?.name || "");
@@ -40,6 +42,7 @@ const NewTaskDialog = () => {
       completed: false,
       completedDate: null,
       assignedUser,
+      createdBy: loggedUser?.fullname ?? "",
     });
     setTitle("");
     setIsTaskDialogOpen(false);
@@ -112,8 +115,8 @@ const NewTaskDialog = () => {
                 className="border rounded px-2 py-1 text-white"
               >
                 {users.map((col) => (
-                  <option key={col.id} value={col.name}>
-                    {col.name}
+                  <option key={col.id} value={col.fullname}>
+                    {col.fullname}
                   </option>
                 ))}
               </select>

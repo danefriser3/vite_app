@@ -1,10 +1,23 @@
 import { Check, Delete, FiberManualRecord, Search } from "@mui/icons-material";
-import { useTaskContext } from "../../context/TaskContext";
+import { Task, useTaskContext } from "../../context/TaskContext";
 import Chart from "../Chart";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 const TaskSummaryDialog = () => {
   const { tasks, selectTask, toggleTaskCompletion, removeTask } =
     useTaskContext();
+  const { loggedUser } = useAuth();
+  const [allowedTasks, setAllowedTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    const obj = tasks.filter(
+      (t) =>
+        t.assignedUser === loggedUser!.fullname ||
+        t.createdBy === loggedUser!.fullname
+    );
+    setAllowedTasks(obj);
+  }, [tasks, loggedUser]);
 
   const getDueDateColor = (dueDate: string) => {
     if (!dueDate) return "inherit";
@@ -20,8 +33,8 @@ const TaskSummaryDialog = () => {
     }
   };
 
-  const completedTasks = tasks.filter((task) => task.completed);
-  const notCompletedTasks = tasks.filter((task) => !task.completed);
+  const completedTasks = allowedTasks.filter((task) => task.completed);
+  const notCompletedTasks = allowedTasks.filter((task) => !task.completed);
 
   const completedInTime = completedTasks.filter(
     (task) =>
@@ -53,20 +66,20 @@ const TaskSummaryDialog = () => {
               <h3 className="font-semibold text-lg">Total Tasks</h3>
               <hr className="!border-gray-500" />
               <div>
-                <p>Total: {tasks.length}</p>
+                <p>Total: {allowedTasks.length}</p>
                 <div className="flex flex-row gap-4">
                   <p>
                     <FiberManualRecord fontSize="small" color="success" /> Low:{" "}
-                    {tasks.filter((t) => t.priority === "Low").length}
+                    {allowedTasks.filter((t) => t.priority === "Low").length}
                   </p>
                   <p>
                     <FiberManualRecord fontSize="small" color="warning" />{" "}
                     Medium:{" "}
-                    {tasks.filter((t) => t.priority === "Medium").length}
+                    {allowedTasks.filter((t) => t.priority === "Medium").length}
                   </p>
                   <p>
                     <FiberManualRecord fontSize="small" color="error" /> High:{" "}
-                    {tasks.filter((t) => t.priority === "High").length}
+                    {allowedTasks.filter((t) => t.priority === "High").length}
                   </p>
                 </div>
               </div>

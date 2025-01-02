@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTaskContext } from "../../context/TaskContext";
+import { useAuth } from "../../context/AuthContext";
 
 const TaskDetailsDialog = () => {
-  const { selectedTask, selectTask, updateTask, users } = useTaskContext();
+  const { selectedTask, selectTask, updateTask } = useTaskContext();
+  const { users } = useAuth();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -20,6 +22,7 @@ const TaskDetailsDialog = () => {
       description,
       priority,
       dueDate,
+      createdBy: selectedTask!.createdBy,
       completedDate: selectedTask!.completedDate,
       assignedUser,
     });
@@ -87,8 +90,8 @@ const TaskDetailsDialog = () => {
               className="w-full border rounded px-2 py-1"
             >
               {users.map((col) => (
-                <option key={col.id} value={col.name}>
-                  {col.name}
+                <option key={col.id} value={col.fullname}>
+                  {col.fullname}
                 </option>
               ))}
             </select>

@@ -1,6 +1,7 @@
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { useTaskContext } from "../context/TaskContext";
+import { Task, useTaskContext } from "../context/TaskContext";
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const COLORS = [
   "#0088FE",
@@ -13,15 +14,18 @@ const COLORS = [
 
 const Chart = () => {
   const { columns, tasks } = useTaskContext();
+  const { loggedUser } = useAuth();
+
+  const [allowedTasks, setAllowedTasks] = useState<Task[]>([]);
 
   const [viewMode, setViewMode] = useState("category");
 
   const filteredData = columns.map((column) => ({
     name: column.name,
-    value: tasks.filter((task) => task.status === column.name).length,
+    value: allowedTasks.filter((task) => task.status === column.name).length,
   }));
 
-  const priorityCounts = tasks.reduce((acc, task) => {
+  const priorityCounts = allowedTasks.reduce((acc, task) => {
     acc[task.priority] = (acc[task.priority] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
@@ -36,14 +40,24 @@ const Chart = () => {
   const [toShow, setToShow] = useState(filteredData);
 
   useEffect(() => {
+    const obj = tasks.filter(
+      (t) =>
+        t.assignedUser === loggedUser!.fullname ||
+        t.createdBy === loggedUser!.fullname
+    );
+    setAllowedTasks(obj);
+  }, [tasks, loggedUser]);
+
+  useEffect(() => {
     setToShow(
       viewMode === "category"
         ? columns.map((column) => ({
             name: column.name,
-            value: tasks.filter((task) => task.status === column.name).length,
+            value: allowedTasks.filter((task) => task.status === column.name)
+              .length,
           }))
         : Object.entries(
-            tasks.reduce((acc, task) => {
+            allowedTasks.reduce((acc, task) => {
               acc[task.priority] = (acc[task.priority] || 0) + 1;
               return acc;
             }, {} as Record<string, number>)
@@ -52,7 +66,7 @@ const Chart = () => {
             value,
           }))
     );
-  }, [viewMode, columns, tasks]);
+  }, [viewMode, columns, tasks, allowedTasks]);
 
   return (
     <div className="border border-gray-200 bg-gray-200 rounded-lg w-full md:w-1/4 flex flex-col justify-center min-h-36 h-fit p-2  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">

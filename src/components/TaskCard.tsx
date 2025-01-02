@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTaskContext } from "../context/TaskContext";
 import { Check, Clear, Delete, MoreHoriz, Search } from "@mui/icons-material";
+import { useAuth } from "../context/AuthContext";
 
 type TaskCardProps = {
   task: {
@@ -13,11 +14,13 @@ type TaskCardProps = {
     completed: boolean;
     completedDate: string | null;
     assignedUser?: string;
+    createdBy: string;
   };
 };
 
 const TaskCard = ({ task }: TaskCardProps) => {
   const { removeTask, selectTask, toggleTaskCompletion } = useTaskContext();
+  const { loggedUser } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const getDueDateColor = (dueDate: string) => {
@@ -103,7 +106,12 @@ const TaskCard = ({ task }: TaskCardProps) => {
                   removeTask(task.id);
                   setMenuOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 shadow-2xl bg-white text-sm text-red-500 border-none hover:!bg-slate-100"
+                disabled={task.createdBy !== loggedUser?.fullname}
+                className={`w-full text-left px-4 py-2 shadow-2xl bg-white text-sm text-red-500 border-none hover:!bg-slate-100 ${
+                  task.createdBy !== loggedUser?.fullname
+                    ? "cursor-not-allowed  hover:bg-gray-500"
+                    : ""
+                }`}
               >
                 <Delete fontSize="small" />
                 <span className="ml-2">Delete Task</span>

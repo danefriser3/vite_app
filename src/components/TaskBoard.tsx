@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useTaskContext } from "../context/TaskContext";
+import { useEffect, useState } from "react";
+import { Task, useTaskContext } from "../context/TaskContext";
 import TaskCard from "./TaskCard";
 import NewTaskDialog from "./dialogs/NewTaskDialog";
 import NewColumnDialog from "./dialogs/NewColumnDialog";
@@ -16,6 +16,7 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import TaskSummaryDialog from "./dialogs/TaskSummaryDialog";
+import { useAuth } from "../context/AuthContext";
 
 const TaskBoard = () => {
   const {
@@ -27,10 +28,13 @@ const TaskBoard = () => {
     removeTask,
     toggleTaskCompletion,
   } = useTaskContext();
+  const { loggedUser } = useAuth();
   const [openMenu, setOpenMenu] = useState<Record<string, boolean>>({});
   const [viewMode, setViewMode] = useState<"columns" | "table">("columns");
   const [open, setOpen] = useState(false);
   const toggleDialog = () => setOpen((prev) => !prev);
+
+  const [allowedTasks, setAllowedTasks] = useState<Task[]>([]);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -50,6 +54,15 @@ const TaskBoard = () => {
     setOpenMenu((prev) => ({ ...prev, [columnId]: false }));
   };
 
+  useEffect(() => {
+    const obj = tasks.filter(
+      (t) =>
+        t.assignedUser === loggedUser!.fullname ||
+        t.createdBy === loggedUser!.fullname
+    );
+    setAllowedTasks(obj);
+  }, [tasks, loggedUser]);
+
   return (
     <div className="p-0 h-full w-full border border-gray-200 rounded-lg shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)] overflow-auto">
       <div className="flex flex-row justify-between gap-4 py-4 px-4 border-b border-gray-300">
@@ -64,7 +77,9 @@ const TaskBoard = () => {
               disabled={viewMode === "table" || open}
               onClick={() => setViewMode("table")}
               className={`bg-red-500 text-white py-1 px-2 rounded-lg border-none rounded-r-none ${
-                columns.length === 0 ? "cursor-not-allowed" : "hover:bg-red-700"
+                columns?.length === 0
+                  ? "cursor-not-allowed"
+                  : "hover:bg-red-700"
               } ${
                 viewMode === "table" || open
                   ? "cursor-not-allowed !bg-gray-500 hover:bg-gray-500"
@@ -106,7 +121,7 @@ const TaskBoard = () => {
           className="flex flex-row gap-4 overflow-x-auto p-2 h-full"
           style={{ maxHeight: "calc(100vh - 200px)" }}
         >
-          {columns.map((column) => (
+          {columns?.map((column) => (
             <div
               key={column.id}
               onDragOver={handleDragOver}
@@ -140,7 +155,7 @@ const TaskBoard = () => {
                 )}
               </div>
               <div className="space-y-2 py-2 px-2">
-                {tasks
+                {allowedTasks
                   .filter((task) => task.status === column.name)
                   .map((task) => (
                     <TaskCard key={task.id} task={task} />
@@ -176,7 +191,7 @@ const TaskBoard = () => {
               </tr>
             </thead>
             <tbody>
-              {tasks.map((task) => (
+              {allowedTasks.map((task) => (
                 <tr key={task.id}>
                   <td className="border border-gray-300 px-4 py-2">
                     {task.title}

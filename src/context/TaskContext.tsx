@@ -10,6 +10,7 @@ export type Task = {
   completed: boolean;
   completedDate: string | null;
   assignedUser?: string;
+  createdBy: string;
 };
 
 export type Column = {
@@ -19,7 +20,9 @@ export type Column = {
 
 export type User = {
   id: string;
-  name: string;
+  fullname?: string;
+  username?: string;
+  password: string;
 };
 
 export type TaskContextType = {
@@ -27,7 +30,6 @@ export type TaskContextType = {
   columns: Column[];
   theme: "light" | "dark";
   selectedTask: Task | null;
-  users: User[];
   updateTaskStatus: (id: string, status: string) => void;
   addTask: (task: Task) => void;
   removeTask: (id: string) => void;
@@ -50,19 +52,13 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
       : {
           tasks: [],
           columns: [{ id: "backlog", name: "Backlog" }],
-          users: [
-            { id: "1", name: "John Doe" },
-            { id: "2", name: "Daniele Parisi" },
-          ],
         };
   };
-
   const [state, setState] = useState<{
     tasks: Task[];
     columns: Column[];
     theme: "light" | "dark";
     selectedTask: Task | null;
-    users: User[];
   }>(() => ({ ...getInitialState(), selectedTask: null }));
 
   useEffect(() => {
