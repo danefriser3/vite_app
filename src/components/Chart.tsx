@@ -55,7 +55,7 @@ const Chart = () => {
   }, [viewMode, columns, tasks]);
 
   return (
-    <div className="border border-gray-200 rounded-lg w-1/3 flex flex-col justify-center min-h-36 h-fit p-2  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
+    <div className="border border-gray-200 bg-gray-200 rounded-lg w-full md:w-1/4 flex flex-col justify-center min-h-36 h-fit p-2  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
       <h2 className="text-lg font-bold text-center p-2">Tasks Distribution</h2>
       <div className="flex justify-center text-sm">
         <button
@@ -88,7 +88,7 @@ const Chart = () => {
         </button>
       </div>
       {filteredData.length > 0 ? (
-        <PieChart width={500} height={400}>
+        <PieChart width={250} height={400} className="!w-full !h-[350px]">
           <Pie
             data={toShow}
             dataKey="value"

@@ -26,7 +26,7 @@ const NewColumnDialog = () => {
     <>
       <button
         onClick={() => setIsColumnDialogOpen(true)}
-        className="bg-blue-500 text-white py-1 px-2 rounded-md hover:bg-blue-700 border-none rounded-l-none "
+        className="bg-blue-500 flex flex-row text-white py-1 px-2 rounded-md hover:bg-blue-700 border-none rounded-l-none "
       >
         <Queue fontSize="small" /> Category
       </button>

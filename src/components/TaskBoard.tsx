@@ -51,7 +51,7 @@ const TaskBoard = () => {
   };
 
   return (
-    <div className="p-0 h-full w-2/3 border border-gray-200 rounded-lg shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
+    <div className="p-0 h-full w-full border border-gray-200 rounded-lg shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)] overflow-auto">
       <div className="flex flex-row justify-between gap-4 py-4 px-4 border-b border-gray-300">
         <div className="flex flex-row items-center rounded-md shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
           <NewTaskDialog />
@@ -95,7 +95,7 @@ const TaskBoard = () => {
             ) : (
               <Visibility fontSize="small" />
             )}{" "}
-            Tasks Stats
+            Stats
           </button>
         </div>
       </div>

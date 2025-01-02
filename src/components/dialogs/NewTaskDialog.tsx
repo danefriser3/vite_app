@@ -50,7 +50,7 @@ const NewTaskDialog = () => {
       <button
         onClick={() => setIsTaskDialogOpen(true)}
         disabled={columns.length === 0}
-        className={`bg-green-500 text-white py-1 px-2 rounded-md  border-none rounded-r-none ${
+        className={`bg-green-500 flex flex-row text-white py-1 px-2 rounded-md  border-none rounded-r-none ${
           columns.length === 0 ? "cursor-not-allowed" : "hover:bg-green-700"
         }`}
       >
@@ -58,7 +58,7 @@ const NewTaskDialog = () => {
       </button>
       {isTaskDialogOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="rounded-lg p-6 w-4/12 bg-gray-600  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
+          <div className="rounded-lg p-6  w-4/5 md:w-4/12 bg-gray-600  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
             <h2 className="text-lg font-bold mb-4 text-black">Add New Task</h2>
             <div className="flex flex-col gap-2">
               <input

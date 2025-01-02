@@ -43,7 +43,7 @@ const TaskDetailsDialog = () => {
   if (!selectedTask) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white">
-      <div className=" bg-gray-600 rounded-lg shadow-lg p-6 w-1/3">
+      <div className=" bg-gray-600 rounded-lg shadow-lg p-6 md:1/3 w-4/5">
         <h2 className="text-lg font-bold mb-4">Edit Task</h2>
         <div className="space-y-4">
           <div>
