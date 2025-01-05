@@ -1,24 +1,36 @@
 import { useEffect, useState } from "react";
 import { useTaskContext } from "../../context/TaskContext";
 import { Queue } from "@mui/icons-material";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { NewColumnFormFields } from "../../utils/types";
 
 const NewColumnDialog = () => {
   const { addColumn } = useTaskContext();
-  const [columnName, setColumnName] = useState("");
   const [isColumnDialogOpen, setIsColumnDialogOpen] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<NewColumnFormFields>({
+    defaultValues: { columnName: "" },
+  });
 
   useEffect(() => {
     if (isColumnDialogOpen) {
-      setColumnName("");
+      reset({ columnName: "" });
     }
-  }, [isColumnDialogOpen]);
+  }, [isColumnDialogOpen, reset]);
 
-  const handleAddColumn = () => {
+  const onSubmit: SubmitHandler<NewColumnFormFields> = ({
+    columnName,
+  }: NewColumnFormFields) => {
     if (!columnName.trim()) {
       return;
     }
     addColumn(columnName);
-    setColumnName("");
+    reset({ columnName: "" });
     setIsColumnDialogOpen(false);
   };
 
@@ -32,18 +44,24 @@ const NewColumnDialog = () => {
       </button>
       {isColumnDialogOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-gray-600 rounded-lg p-6 w-96  shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
+          <div className="bg-gray-600 rounded-lg p-6 w-96 flex flex-col gap-2 shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]">
             <h2 className="text-lg font-bold mb-4 text-black">
               Add New Category
             </h2>
             <input
               type="text"
               autoFocus
-              value={columnName}
-              onChange={(e) => setColumnName(e.target.value)}
+              {...register("columnName", {
+                required: "Category name is required",
+              })}
               placeholder="Category Name"
-              className="border rounded px-2 py-1 w-full mb-4 text-black1"
+              className="border rounded px-2 py-1 w-full text-black1"
             />
+            {errors.columnName && (
+              <p className="text-red-500 text-xs font-bold">
+                {errors.columnName.message}
+              </p>
+            )}
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsColumnDialogOpen(false)}
@@ -52,7 +70,7 @@ const NewColumnDialog = () => {
                 Cancel
               </button>
               <button
-                onClick={handleAddColumn}
+                onClick={handleSubmit(onSubmit)}
                 className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700"
               >
                 Add Category

@@ -1,25 +1,35 @@
-import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { RegisterFormFields } from "../utils/types";
 
 const Register = () => {
-  const { register, users } = useAuth();
-  const [error, setError] = useState(false);
-  const [fullname, setFullname] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register: reg,
+    handleSubmit: hs,
+    setError: se,
+    formState: { errors },
+  } = useForm<RegisterFormFields>({
+    defaultValues: { fullname: "", username: "", password: "" },
+  });
 
+  const { register, users } = useAuth();
   const history = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit: SubmitHandler<RegisterFormFields> = ({
+    username,
+    fullname,
+    password,
+  }: RegisterFormFields) => {
     if (
       !fullname ||
       !username ||
       !password ||
       users.some((user) => user.username === username)
     )
-      setError(true);
+      se("username", {
+        message: "Username already exists",
+      });
     else {
       register(fullname, username, password);
       history("/login");
@@ -29,57 +39,63 @@ const Register = () => {
   return (
     <div className="flex items-center justify-center h-screen">
       <form
-        onSubmit={handleSubmit}
+        onSubmit={hs(onSubmit)}
         className="bg-gray-600 p-6  w-4/5 md:w-3/12 rounded-lg shadow-[-2px_2px_6px_2px_rgba(0,0,0,0.5)]"
       >
         <h2 className="text-lg font-bold mb-4 text-black">Register</h2>
         <div className="flex flex-col gap-2 text-white text-black1">
           <input
             type="text"
-            value={fullname}
-            onChange={(e) => setFullname(e.target.value)}
+            {...reg("fullname", {
+              required: {
+                value: true,
+                message: "Full Name is required",
+              },
+            })}
             placeholder="Full Name"
             className={`w-full border rounded p-2 ${
-              error ? "border-red-500 border-2" : ""
+              errors.fullname ? "border-red-500 border-2" : ""
             }`}
           />
-          {error && fullname === "" && (
+          {errors.fullname && (
             <p className="text-red-500 text-sm font-bold">
-              * Full Name must not be empty
+              {errors.fullname.message}
             </p>
           )}
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            {...reg("username", {
+              required: {
+                value: true,
+                message: "Username is required",
+              },
+            })}
             placeholder="Username"
             className={`w-full border rounded p-2 ${
-              error ? "border-red-500 border-2" : ""
+              errors.username ? "border-red-500 border-2" : ""
             }`}
           />
-          {error &&
-            ((username !== "" && (
-              <p className="text-red-500 text-sm font-bold">
-                * Username already exists
-              </p>
-            )) ||
-              (username === "" && (
-                <p className="text-red-500 text-sm font-bold">
-                  * Username must not be empty
-                </p>
-              )))}
+          {errors.username && (
+            <p className="text-red-500 text-sm font-bold">
+              {errors.username.message}
+            </p>
+          )}
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...reg("password", {
+              required: {
+                value: true,
+                message: "Password is required",
+              },
+            })}
             placeholder="Password"
             className={`w-full border rounded p-2 ${
-              error ? "border-red-500 border-2" : ""
+              errors.password ? "border-red-500 border-2" : ""
             }`}
           />
-          {error && password === "" && (
+          {errors.password && (
             <p className="text-red-500 text-sm font-bold">
-              * Password must not be empty
+              {errors.password.message}
             </p>
           )}
         </div>

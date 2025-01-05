@@ -1,18 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTaskContext } from "../../context/TaskContext";
 import { useAuth } from "../../context/AuthContext";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { EditTaskFormFields } from "../../utils/types";
 
 const TaskDetailsDialog = () => {
   const { selectedTask, selectTask, updateTask } = useTaskContext();
   const { users } = useAuth();
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("");
-  const [assignedUser, setAssignedUser] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<EditTaskFormFields>({
+    defaultValues: {
+      title: selectedTask?.title || "",
+      description: selectedTask?.description || "",
+      priority: selectedTask?.priority || "",
+      assignedUser: selectedTask?.assignedUser || "",
+      dueDate: selectedTask?.dueDate || "",
+    },
+  });
 
-  const handleSave = () => {
+  const handleSave: SubmitHandler<EditTaskFormFields> = ({
+    title,
+    description,
+    priority,
+    assignedUser,
+    dueDate,
+  }: EditTaskFormFields) => {
     updateTask({
       ...selectedTask,
       id: selectedTask!.id,
@@ -30,19 +47,23 @@ const TaskDetailsDialog = () => {
   };
   useEffect(() => {
     if (selectedTask) {
-      setTitle(selectedTask.title);
-      setDescription(selectedTask.description);
-      setPriority(selectedTask.priority);
-      setAssignedUser(selectedTask.assignedUser!);
-      setDueDate(selectedTask.dueDate);
+      reset({
+        title: selectedTask.title,
+        description: selectedTask.description,
+        priority: selectedTask.priority,
+        assignedUser: selectedTask.assignedUser,
+        dueDate: selectedTask.dueDate,
+      });
       return;
     }
-    setTitle("");
-    setDescription("");
-    setAssignedUser("");
-    setPriority("");
-    setDueDate("");
-  }, [selectedTask]);
+    reset({
+      title: "",
+      description: "",
+      priority: "",
+      assignedUser: "",
+      dueDate: "",
+    });
+  }, [selectedTask, reset]);
   if (!selectedTask) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white">
@@ -54,16 +75,21 @@ const TaskDetailsDialog = () => {
             <input
               type="text"
               placeholder="Task Title..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              {...register("title", {
+                required: "Task Title required",
+              })}
               className="w-full border rounded px-2 py-1 "
             />
+            {errors.title && (
+              <p className="text-red-500 text-sm font-bold">
+                {errors.title.message}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium">Description</label>
             <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              {...register("description")}
               className="w-full border rounded px-2 py-1"
               rows={5}
             />
@@ -71,10 +97,7 @@ const TaskDetailsDialog = () => {
           <div>
             <label className="block text-sm font-medium">Priority</label>
             <select
-              value={priority}
-              onChange={(e) =>
-                setPriority(e.target.value as "Low" | "Medium" | "High")
-              }
+              {...register("priority")}
               className="w-full border rounded px-2 py-1"
             >
               <option value="Low">Low</option>
@@ -85,8 +108,7 @@ const TaskDetailsDialog = () => {
           <div>
             <label className="block text-sm font-medium">Assigned to</label>
             <select
-              value={assignedUser}
-              onChange={(e) => setAssignedUser(e.target.value)}
+              {...register("assignedUser")}
               className="w-full border rounded px-2 py-1"
             >
               {users.map((col) => (
@@ -100,8 +122,7 @@ const TaskDetailsDialog = () => {
             <label className="block text-sm font-medium">Due Date</label>
             <input
               type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
+              {...register("dueDate")}
               className="w-full border rounded px-2 py-1"
             />
           </div>
@@ -114,7 +135,7 @@ const TaskDetailsDialog = () => {
             Cancel
           </button>
           <button
-            onClick={handleSave}
+            onClick={handleSubmit(handleSave)}
             className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded"
           >
             Save

@@ -2,34 +2,60 @@ import { useEffect, useState } from "react";
 import { useTaskContext } from "../../context/TaskContext";
 import { PlaylistAdd } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { NewTaskFormFields } from "../../utils/types";
 
 const NewTaskDialog = () => {
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
   const { columns, addTask } = useTaskContext();
   const { users, loggedUser } = useAuth();
-  const [title, setTitle] = useState("");
-  const [assignedUser, setAssignedUser] = useState(users[0].fullname);
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<"Low" | "Medium" | "High">("Low");
-  const [status, setStatus] = useState(columns[0]?.name || "");
-  const [dueDate, setDueDate] = useState("");
 
-  const [validate, setValidate] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    reset,
+  } = useForm<NewTaskFormFields>({
+    defaultValues: {
+      title: "",
+      assignedUser: users[0].fullname,
+      description: "",
+      priority: "Low",
+      status: columns[0]?.name || "",
+      dueDate: "",
+    },
+  });
 
   useEffect(() => {
     if (!isTaskDialogOpen) {
       return;
     }
-    setValidate(false);
-    setDescription("");
-    setTitle("");
-    setPriority("Low");
-    setDueDate("");
-  }, [isTaskDialogOpen]);
+    reset({
+      title: "",
+      assignedUser: users[0].fullname,
+      description: "",
+      priority: "Low",
+      status: columns[0]?.name || "",
+      dueDate: "",
+    });
+  }, [isTaskDialogOpen, reset, columns, users]);
 
-  const handleAddTask = () => {
+  const onAddTask: SubmitHandler<NewTaskFormFields> = ({
+    title,
+    assignedUser,
+    description,
+    priority,
+    status,
+    dueDate,
+  }: NewTaskFormFields) => {
     if (!(title.trim() && dueDate)) {
-      setValidate(true);
+      setError("title", {
+        message: "Please enter a title",
+      });
+      setError("dueDate", {
+        message: "Please enter a due date",
+      });
       return;
     }
     addTask({
@@ -44,7 +70,14 @@ const NewTaskDialog = () => {
       assignedUser,
       createdBy: loggedUser?.fullname ?? "",
     });
-    setTitle("");
+    reset({
+      title: "",
+      assignedUser: users[0].fullname,
+      description: "",
+      priority: "Low",
+      status: columns[0]?.name || "",
+      dueDate: "",
+    });
     setIsTaskDialogOpen(false);
   };
 
@@ -67,31 +100,26 @@ const NewTaskDialog = () => {
               <input
                 type="text"
                 autoFocus
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                {...register("title")}
                 placeholder="Task Title..."
                 className={`w-full border rounded text-black1 p-2 ${
-                  title === "" && validate ? "border-2 border-red-500" : ""
+                  errors.title ? "border-2 border-red-500" : ""
                 }`}
               />
-              {title === "" && validate && (
+              {errors.title && (
                 <span className="text-xs text-red-700 font-bold">
                   * Add a title
                 </span>
               )}
 
               <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                {...register("description")}
                 className="w-full border rounded text-black1 px-2 py-1"
                 rows={5}
                 placeholder="Task Description..."
               />
               <select
-                value={priority}
-                onChange={(e) =>
-                  setPriority(e.target.value as "Low" | "Medium" | "High")
-                }
+                {...register("priority")}
                 className="border rounded text-black1 px-2 py-1 text-white"
               >
                 <option value="Low">Low Priority</option>
@@ -99,8 +127,7 @@ const NewTaskDialog = () => {
                 <option value="High">High Priority</option>
               </select>
               <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                {...register("status")}
                 className="border rounded px-2 py-1 text-white"
               >
                 {columns.map((col) => (
@@ -110,8 +137,7 @@ const NewTaskDialog = () => {
                 ))}
               </select>
               <select
-                value={assignedUser}
-                onChange={(e) => setAssignedUser(e.target.value)}
+                {...register("assignedUser")}
                 className="border rounded px-2 py-1 text-white"
               >
                 {users.map((col) => (
@@ -122,13 +148,12 @@ const NewTaskDialog = () => {
               </select>
               <input
                 type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
+                {...register("dueDate")}
                 className={`w-full border rounded p-2  text-white ${
-                  dueDate === "" && validate ? "border-2 border-red-500" : ""
+                  errors.dueDate ? "border-2 border-red-500" : ""
                 }`}
               />
-              {dueDate === "" && validate && (
+              {errors.dueDate && (
                 <span className="text-xs text-red-700 font-bold">
                   * Please select a due date
                 </span>
@@ -142,7 +167,7 @@ const NewTaskDialog = () => {
                 Cancel
               </button>
               <button
-                onClick={handleAddTask}
+                onClick={handleSubmit(onAddTask)}
                 className="bg-green-500 text-white  px-2 py-1 rounded hover:bg-green-700"
               >
                 Add Task
