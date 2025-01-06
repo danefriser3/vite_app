@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useTaskContext } from "../../context/TaskContext";
 import { Queue } from "@mui/icons-material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { NewColumnFormFields } from "../../utils/types";
+import { useTaskContext } from "../../context/useTaskContext";
 
 const NewColumnDialog = () => {
   const { addColumn } = useTaskContext();

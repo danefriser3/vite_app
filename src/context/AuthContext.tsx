@@ -1,21 +1,6 @@
-import { createContext, useState, useContext, ReactNode } from "react";
-import { User } from "./TaskContext";
-
-type AuthContextType = {
-  users: User[];
-  loggedUser: User | null;
-  isAuthenticated: boolean;
-  addUser: (user: {
-    fullname: string;
-    username: string;
-    password: string;
-  }) => void;
-  login: (username: string, password: string) => void;
-  logout: () => void;
-  register: (fullname: string, username: string, password: string) => void;
-};
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { useState, ReactNode } from "react";
+import { User } from "../utils/types";
+import { AuthContext } from "./useAuth";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const getIsAuthenticated = () => {
@@ -113,12 +98,4 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };

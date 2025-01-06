@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useTaskContext } from "../context/TaskContext";
 import { DarkMode, LightMode } from "@mui/icons-material";
+import { useTaskContext } from "../context/useTaskContext";
 
 const ThemeToggle = () => {
   const [darkMode, setDarkMode] = useState(false);

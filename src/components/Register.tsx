@@ -1,7 +1,7 @@
-import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { RegisterFormFields } from "../utils/types";
+import { useAuth } from "../context/useAuth";
 
 const Register = () => {
   const {

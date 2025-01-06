@@ -1,48 +1,7 @@
-import React, { createContext, useState, useEffect, ReactNode } from "react";
-
-export type Task = {
-  id: string;
-  title: string;
-  priority: "Low" | "Medium" | "High" | string;
-  status: string;
-  description: string;
-  dueDate: string;
-  completed: boolean;
-  completedDate: string | null;
-  assignedUser?: string;
-  createdBy: string;
-};
-
-export type Column = {
-  id: string;
-  name: string;
-};
-
-export type User = {
-  id: string;
-  fullname?: string;
-  username?: string;
-  password: string;
-};
-
-export type TaskContextType = {
-  tasks: Task[];
-  columns: Column[];
-  theme: "light" | "dark";
-  selectedTask: Task | null;
-  updateTaskStatus: (id: string, status: string) => void;
-  addTask: (task: Task) => void;
-  removeTask: (id: string) => void;
-  addColumn: (name: string) => void;
-  removeColumn: (id: string) => void;
-  toggleTheme: () => void;
-  selectTask: (task: Task | null) => void;
-  updateTask: (updatedTask: Task) => void;
-  toggleTaskCompletion: (id: string) => void;
-  assignUserToTask: (taskId: string, userId: string) => void;
-};
-
-const TaskContext = createContext<TaskContextType | undefined>(undefined);
+import { useMutation } from "@tanstack/react-query";
+import { useState, useEffect, ReactNode } from "react";
+import { Column, Task } from "../utils/types";
+import { TaskContext } from "./useTaskContext";
 
 export const TaskProvider = ({ children }: { children: ReactNode }) => {
   const getInitialState = () => {
@@ -66,95 +25,122 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
     document.body.className = state.theme;
   }, [state]);
 
-  const updateTaskStatus = (id: string, status: string) => {
-    setState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((task) =>
-        task.id === id ? { ...task, status } : task
-      ),
-    }));
-  };
+  const { mutate: updateTaskStatus } = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) => {
+      return new Promise(() =>
+        setState((prev) => ({
+          ...prev,
+          tasks: prev.tasks.map((task) =>
+            task.id === id ? { ...task, status } : task
+          ),
+        }))
+      );
+    },
+  });
 
-  const addTask = (task: Task) => {
-    setState((prev) => ({ ...prev, tasks: [...prev.tasks, task] }));
-  };
+  const { mutate: addTask } = useMutation({
+    mutationFn: (task: Task) => {
+      return new Promise(() => {
+        setState((prev) => ({ ...prev, tasks: [...prev.tasks, task] }));
+      });
+    },
+  });
 
-  const removeTask = (id: string) => {
-    setState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.filter((task) => task.id !== id),
-    }));
-  };
+  const { mutate: removeTask } = useMutation({
+    mutationFn: (id: string) => {
+      return new Promise(() => {
+        setState((prev) => ({
+          ...prev,
+          tasks: prev.tasks.filter((task) => task.id !== id),
+        }));
+      });
+    },
+  });
 
-  const updateTask = (updatedTask: Task) => {
-    setState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((task) =>
-        task.id === updatedTask.id ? updatedTask : task
-      ),
-    }));
-  };
+  const { mutate: updateTask } = useMutation({
+    mutationFn: (updatedTask: Task) => {
+      return new Promise(() => {
+        setState((prev) => ({
+          ...prev,
+          tasks: prev.tasks.map((task) =>
+            task.id === updatedTask.id ? updatedTask : task
+          ),
+        }));
+      });
+    },
+  });
 
-  const toggleTaskCompletion = (id: string) => {
-    setState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              completed: !task.completed,
-              completedDate: task.completed ? null : new Date().toISOString(),
-            }
-          : task
-      ),
-    }));
-  };
+  const { mutate: toggleTaskCompletion } = useMutation({
+    mutationFn: (id: string) => {
+      return new Promise(() =>
+        setState((prev) => ({
+          ...prev,
+          tasks: prev.tasks.map((task) =>
+            task.id === id
+              ? {
+                  ...task,
+                  completed: !task.completed,
+                  completedDate: task.completed
+                    ? null
+                    : new Date().toISOString(),
+                }
+              : task
+          ),
+        }))
+      );
+    },
+  });
 
-  const addColumn = (name: string) => {
-    setState((prev) => ({
-      ...prev,
-      columns: [...prev.columns, { id: Date.now().toString(), name }],
-    }));
-  };
+  const { mutate: addColumn } = useMutation({
+    mutationFn: (name: string) => {
+      return new Promise(() => {
+        setState((prev) => ({
+          ...prev,
+          columns: [...prev.columns, { id: Date.now().toString(), name }],
+        }));
+      });
+    },
+  });
 
-  const removeColumn = (id: string) => {
-    if (id === "backlog") return;
+  const { mutate: removeColumn } = useMutation({
+    mutationFn: (id: string) => {
+      return new Promise(() => {
+        const colname = state.columns.find((col) => col.id === id)?.name;
+        const tasksToMove = state.tasks.map((task) => ({
+          ...task,
+          status: task.status === colname ? "Backlog" : task.status,
+        }));
 
-    const colname = state.columns.find((col) => col.id === id)?.name;
-    const tasksToMove = state.tasks.map((task) => ({
-      ...task,
-      status: task.status === colname ? "Backlog" : task.status,
-    }));
+        setState((prev) => ({
+          ...prev,
+          columns: prev.columns.filter((col) => col.id !== id),
+          tasks: tasksToMove,
+        }));
+      });
+    },
+  });
 
-    setState((prev) => ({
-      ...prev,
-      columns: prev.columns.filter((col) => col.id !== id),
-      tasks: tasksToMove,
-    }));
-  };
+  const { mutate: toggleTheme } = useMutation({
+    mutationFn: () => {
+      return new Promise(() => {
+        setState((prev) => ({
+          ...prev,
+          theme: prev.theme === "light" ? "dark" : "light",
+        }));
+      });
+    },
+  });
 
-  const toggleTheme = () => {
-    setState((prev) => ({
-      ...prev,
-      theme: prev.theme === "light" ? "dark" : "light",
-    }));
-  };
-
-  const selectTask = (task: Task | null) => {
-    setState((prev) => ({
-      ...prev,
-      selectedTask: task,
-    }));
-  };
-
-  const assignUserToTask = (taskId: string, userId: string) => {
-    setState((prev) => ({
-      ...prev,
-      tasks: prev.tasks.map((task) =>
-        task.id === taskId ? { ...task, assignedUser: userId } : task
-      ),
-    }));
-  };
+  const { mutate: selectTask } = useMutation({
+    mutationFn: (task: Task | null) => {
+      return new Promise(() => {
+        setState((prev) => ({
+          ...prev,
+          selectedTask: task,
+        }));
+      });
+    },
+  });
 
   return (
     <TaskContext.Provider
@@ -169,17 +155,9 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         selectTask,
         updateTask,
         toggleTaskCompletion,
-        assignUserToTask,
       }}
     >
       {children}
     </TaskContext.Provider>
   );
-};
-
-export const useTaskContext = () => {
-  const context = React.useContext(TaskContext);
-  if (!context)
-    throw new Error("useTaskContext must be used within TaskProvider");
-  return context;
 };

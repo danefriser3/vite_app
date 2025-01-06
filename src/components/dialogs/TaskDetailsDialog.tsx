@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useTaskContext } from "../../context/TaskContext";
-import { useAuth } from "../../context/AuthContext";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { EditTaskFormFields } from "../../utils/types";
+import { useAuth } from "../../context/useAuth";
+import { useTaskContext } from "../../context/useTaskContext";
 
 const TaskDetailsDialog = () => {
   const { selectedTask, selectTask, updateTask } = useTaskContext();

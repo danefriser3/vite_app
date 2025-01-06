@@ -1,8 +1,9 @@
 import { Check, Delete, FiberManualRecord, Search } from "@mui/icons-material";
-import { Task, useTaskContext } from "../../context/TaskContext";
 import Chart from "../Chart";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { Task } from "../../utils/types";
+import { useAuth } from "../../context/useAuth";
+import { useTaskContext } from "../../context/useTaskContext";
 
 const TaskSummaryDialog = () => {
   const { tasks, selectTask, toggleTaskCompletion, removeTask } =

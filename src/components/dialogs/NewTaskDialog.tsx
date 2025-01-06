@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useTaskContext } from "../../context/TaskContext";
 import { PlaylistAdd } from "@mui/icons-material";
-import { useAuth } from "../../context/AuthContext";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { NewTaskFormFields } from "../../utils/types";
+import { useAuth } from "../../context/useAuth";
+import { useTaskContext } from "../../context/useTaskContext";
 
 const NewTaskDialog = () => {
   const [isTaskDialogOpen, setIsTaskDialogOpen] = useState(false);
@@ -49,10 +49,7 @@ const NewTaskDialog = () => {
     status,
     dueDate,
   }: NewTaskFormFields) => {
-    if (!(title.trim() && dueDate)) {
-      setError("title", {
-        message: "Please enter a title",
-      });
+    if (!useTaskContext) {
       setError("dueDate", {
         message: "Please enter a due date",
       });
@@ -100,7 +97,9 @@ const NewTaskDialog = () => {
               <input
                 type="text"
                 autoFocus
-                {...register("title")}
+                {...register("title", {
+                  required: "Task Title required",
+                })}
                 placeholder="Task Title..."
                 className={`w-full border rounded text-black1 p-2 ${
                   errors.title ? "border-2 border-red-500" : ""
@@ -148,7 +147,9 @@ const NewTaskDialog = () => {
               </select>
               <input
                 type="date"
-                {...register("dueDate")}
+                {...register("dueDate", {
+                  required: "Due Date required",
+                })}
                 className={`w-full border rounded p-2  text-white ${
                   errors.dueDate ? "border-2 border-red-500" : ""
                 }`}

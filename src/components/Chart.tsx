@@ -1,7 +1,8 @@
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { Task, useTaskContext } from "../context/TaskContext";
 import { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { Task } from "../utils/types";
+import { useAuth } from "../context/useAuth";
+import { useTaskContext } from "../context/useTaskContext";
 
 const COLORS = [
   "#0088FE",

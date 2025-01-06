@@ -1,7 +1,7 @@
 import TaskBoard from "./components/TaskBoard";
 import ThemeToggle from "./components/ThemeToggle";
 import { Logout } from "@mui/icons-material";
-import { useAuth } from "./context/AuthContext";
+import { useAuth } from "./context/useAuth";
 
 export const App = () => {
   const { logout, loggedUser } = useAuth();

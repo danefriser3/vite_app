@@ -1,9 +1,9 @@
-import { useEffect /* useState */ } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LoginFormFields } from "../utils/types";
+import { useAuth } from "../context/useAuth";
 
 const Login = () => {
   const {

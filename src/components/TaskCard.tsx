@@ -1,22 +1,8 @@
 import { useState } from "react";
-import { useTaskContext } from "../context/TaskContext";
 import { Check, Clear, Delete, MoreHoriz, Search } from "@mui/icons-material";
-import { useAuth } from "../context/AuthContext";
-
-type TaskCardProps = {
-  task: {
-    id: string;
-    title: string;
-    priority: string;
-    status: string;
-    description: string;
-    dueDate: string;
-    completed: boolean;
-    completedDate: string | null;
-    assignedUser?: string;
-    createdBy: string;
-  };
-};
+import { TaskCardProps } from "../utils/types";
+import { useAuth } from "../context/useAuth";
+import { useTaskContext } from "../context/useTaskContext";
 
 const TaskCard = ({ task }: TaskCardProps) => {
   const { removeTask, selectTask, toggleTaskCompletion } = useTaskContext();

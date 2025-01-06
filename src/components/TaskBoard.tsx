@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Task, useTaskContext } from "../context/TaskContext";
 import TaskCard from "./TaskCard";
 import NewTaskDialog from "./dialogs/NewTaskDialog";
 import NewColumnDialog from "./dialogs/NewColumnDialog";
@@ -16,7 +15,9 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import TaskSummaryDialog from "./dialogs/TaskSummaryDialog";
-import { useAuth } from "../context/AuthContext";
+import { Task } from "../utils/types";
+import { useAuth } from "../context/useAuth";
+import { useTaskContext } from "../context/useTaskContext";
 
 const TaskBoard = () => {
   const {
@@ -42,7 +43,7 @@ const TaskBoard = () => {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>, status: string) => {
     const taskId = e.dataTransfer.getData("taskId");
-    updateTaskStatus(taskId, status);
+    updateTaskStatus({ id: taskId, status });
   };
 
   const toggleMenu = (columnId: string) => {

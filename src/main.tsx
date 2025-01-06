@@ -1,42 +1,22 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import { App } from "./App";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import ReactDOM from "react-dom/client";
+import { AuthProvider } from "./context/AuthContext";
 import "./index.css";
 import { TaskProvider } from "./context/TaskContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Main } from "./components/Main";
 
-const Main = () => {
-  const { isAuthenticated } = useAuth();
+const queryClient = new QueryClient();
+const root = ReactDOM.createRoot(document.getElementById("root")!);
 
-  return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/"
-          element={isAuthenticated ? <App /> : <Navigate to="/login" />}
-        />
-      </Routes>
-    </Router>
-  );
-};
-
-ReactDOM.render(
+root.render(
   <React.StrictMode>
-    <TaskProvider>
-      <AuthProvider>
-        <Main />
-      </AuthProvider>
-    </TaskProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+    <QueryClientProvider client={queryClient}>
+      <TaskProvider>
+        <AuthProvider>
+          <Main />
+        </AuthProvider>
+      </TaskProvider>
+    </QueryClientProvider>
+  </React.StrictMode>
 );
