@@ -1,4 +1,3 @@
-import { Login } from "@mui/icons-material";
 import {
   BrowserRouter as Router,
   Route,
@@ -8,6 +7,7 @@ import {
 import { App } from "../App";
 import Register from "./Register";
 import { useAuth } from "../context/useAuth";
+import Login from "./Login";
 
 export const Main = () => {
   const { isAuthenticated } = useAuth();
